@@ -1,0 +1,10 @@
+exceptiongroup==1.2.2
+iniconfig==2.0.0
+new-package==0.0.1
+packaging==24.1
+pluggy==1.5.0
+pytest==8.3.2
+python-dotenv==1.0.1
+SQLAlchemy==2.0.32
+tomli==2.0.1
+typing_extensions==4.12.2

@@ -15,7 +15,7 @@ This Resource Allocation System is a data persistence solution built with SQLite
 
 ## Project Structure
 
-```
+```Bash
 resource_allocation/
 │
 ├── src/
@@ -54,14 +54,14 @@ resource_allocation/
 
 1. Clone the repository:
 
-   ```
+   ```Base
    git clone https://github.com/your-username/resource_allocation.git
    cd resource_allocation
    ```
 
 2. Create a virtual environment:
 
-   ```
+   ```Bash
    python3 -m venv venv
    ```
 
@@ -69,7 +69,7 @@ resource_allocation/
 
    On macOS and Linux:
 
-   ```
+   ```Bash
    source venv/bin/activate
    ```
 
