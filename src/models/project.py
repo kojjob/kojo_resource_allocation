@@ -30,7 +30,9 @@ class Project(BaseModel):
     __tablename__ = "projects"  # Specifies the table name for this model
 
     # Define columns
-    name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    name: Mapped[str] = mapped_column(
+        String(100), nullable=False, unique=True, index=True
+    )
     description: Mapped[str] = mapped_column(String(500))
     start_date: Mapped[date] = mapped_column(Date, nullable=False)
     end_date: Mapped[Optional[date]] = mapped_column(Date)
