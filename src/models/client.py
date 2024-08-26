@@ -1,6 +1,3 @@
-# Future imports for Python 2/3 compatibility
-from __future__ import annotations
-
 # Standard library import
 from typing import TYPE_CHECKING, List
 
@@ -28,8 +25,8 @@ class Client(BaseModel):
 
     __tablename__ = "clients"
 
-    name: Mapped[str] = mapped_column(String(50), nullable=False, index=True)
-    contact_information: Mapped[str] = mapped_column(String(50), nullable=False)
+    name: Mapped[str] = mapped_column(String(100), nullable=False, index=True)
+    contact_information: Mapped[str] = mapped_column(String(100), nullable=False)
 
     # Relationship with Project model
     projects: Mapped[List["Project"]] = relationship(back_populates="client")

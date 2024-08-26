@@ -42,7 +42,10 @@ class BaseModel(Base):
 
     __abstract__ = True
 
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(
+        primary_key=True, autoincrement=True, nullable=False
+    )
+
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         default=utc_now,

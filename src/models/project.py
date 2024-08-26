@@ -1,16 +1,14 @@
 from datetime import date
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING, List, Optional
 
-from sqlalchemy import Date, ForeignKey, String
-from sqlalchemy.orm import Mapped, mapped_column, relationship
+from sqlalchemy import Date, ForeignKey, String, Text
+from sqlalchemy.orm import Mapped, mapped_column, relationship, validates
 
 from src.models.base import BaseModel
 
-# Local application import
-
-# Conditional import to avoid circular dependencies
 if TYPE_CHECKING:
     from src.models.client import Client
+    from src.models.project_requirement import ProjectRequirement
 
 
 class Project(BaseModel):
@@ -18,38 +16,50 @@ class Project(BaseModel):
     Represents a project in the Resource Allocation System.
 
     Attributes:
-      name (Mapped[str]): The name of the project. Required, index for faster queries.
-      description (Mapped[Optional[str]]): A description of the project. Optional.
-      start_date (Mapped[date]): The start date of the project. Required.
-      end_date (Mapped[date]): The end date of the project. Optional.
-      status (Mapped[str]): The current status of the project. Required.
-      client_id (Mapped[int]): The ID of the client associated to this project. Required, foreign key to client table.
-      client (Mapped["Client]):  The client associated with this project. This is many-to-one relationship.
+        id (Mapped[int]): The unique identifier for the project.
+        client_id (Mapped[int]): The ID of the associated client.
+        name (Mapped[str]): The name of the project.
+        desription (Mapped[srt]): A description of the project. Type text.
+        start_date (Mapped[date]): The start date of the project.
+        end_date (Mapped[date]): The end date of the project.
+        status (Mapped[str]): The current status of the project.
+        client (Mapped["Client"]): The associated client.
+        requirements (Mapped[List["ProjectRequirement"]]): List of requirements for this project.
     """
 
-    __tablename__ = "projects"  # Specifies the table name for this model
+    __tablename__ = "projects"
 
-    # Define columns
-    name: Mapped[str] = mapped_column(
-        String(100), nullable=False, unique=True, index=True
-    )
-    description: Mapped[str] = mapped_column(String(500))
-    start_date: Mapped[date] = mapped_column(Date, nullable=False)
-    end_date: Mapped[Optional[date]] = mapped_column(Date)
-    status: Mapped[str] = mapped_column(String(20), nullable=False)
     client_id: Mapped[int] = mapped_column(ForeignKey("clients.id"), nullable=False)
+    name: Mapped[str] = mapped_column(String(100), nullable=False)
+    description: Mapped[Optional[str]] = mapped_column(Text)
+    start_date: Mapped[date] = mapped_column(Date, nullable=False)
+    end_date: Mapped[date] = mapped_column(Date, nullable=False)
+    status: Mapped[str] = mapped_column(String(100))
 
-    # Define relationship
-    # This creates a many-to-one relationship with the Client model
-    # The 'back_populates, parameter creates a bidirectional relationship
     client: Mapped["Client"] = relationship(back_populates="projects")
+    requirements: Mapped[List["ProjectRequirement"]] = relationship(
+        back_populates="project"
+    )
 
-    def __repr__(self) -> str:
+    @validates("end_date")
+    def validate_end_date(self, key, end_date):
         """
-        Returns a string representation of the Project instance.
+        Validate that the end_date is after the start_date.
+
+        Args:
+            key (str): The name of the attribute being validated.
+            end_date (date): The end date to validate.
 
         Returns:
-           str: A string representation of the Project, including its id, name, and status.
-        """
+            date: The validated end date.
 
-        return f"<Projeect(id={self.id}, name='{self.name}', status='{self.status}')>"
+        Raises:
+            ValueError: If the end_date is before or equal to the start_date.
+        """
+        if end_date and self.start_date and end_date <= self.start_date:
+            raise ValueError("End date must be after the start date")
+        return end_date
+
+    def __repr__(self) -> str:
+        """Return a string representation of the Project instance."""
+        return f"<Project(id={self.id}, name='{self.name}', status='{self.status}')>"
